@@ -1,5 +1,117 @@
 {
   "account": "joshmcarthur",
-  "ignore": [],
-  "forks": []
+  "ignore": [
+    "joshmcarthur/Global-signbank",
+    "joshmcarthur/Ligaturizer",
+    "joshmcarthur/PanicButton",
+    "joshmcarthur/Rubex",
+    "joshmcarthur/WebLaunch",
+    "joshmcarthur/actionwebservice",
+    "joshmcarthur/backup",
+    "joshmcarthur/chef-rbenv_passenger",
+    "joshmcarthur/chromix-too",
+    "joshmcarthur/coordinate-parser",
+    "joshmcarthur/doc-hiking-trails-app",
+    "joshmcarthur/echoprint-server",
+    "joshmcarthur/embed-video",
+    "joshmcarthur/fitsync",
+    "joshmcarthur/geokit-gem",
+    "joshmcarthur/gtfs_SQL_importer",
+    "joshmcarthur/jQuery-Live-Preview",
+    "joshmcarthur/jQuery-ajaxTransport-XDomainRequest",
+    "joshmcarthur/jquery-ui-bootstrap",
+    "joshmcarthur/mailcatcher",
+    "joshmcarthur/meteor",
+    "joshmcarthur/miflora-mqtt-daemon",
+    "joshmcarthur/node-fluent-ffmpeg",
+    "joshmcarthur/notes",
+    "joshmcarthur/pow",
+    "joshmcarthur/puppet-mysql",
+    "joshmcarthur/puppet-redis",
+    "joshmcarthur/rad",
+    "joshmcarthur/radiant-multi-site-extension",
+    "joshmcarthur/radiant-scoped-admin-extension",
+    "joshmcarthur/rails-ckeditor",
+    "joshmcarthur/rails-nginx-passenger-ubuntu",
+    "joshmcarthur/rails-template",
+    "joshmcarthur/refinerycms",
+    "joshmcarthur/refinerycms-authentication-devise",
+    "joshmcarthur/scripts",
+    "joshmcarthur/shoulda-matchers",
+    "joshmcarthur/showoff",
+    "joshmcarthur/smsonrails",
+    "joshmcarthur/spider",
+    "joshmcarthur/spree",
+    "joshmcarthur/spree-cms",
+    "joshmcarthur/spree-suppliers",
+    "joshmcarthur/strada-ios",
+    "joshmcarthur/sync",
+    "joshmcarthur/taps",
+    "joshmcarthur/tomdoc",
+    "joshmcarthur/tracks",
+    "joshmcarthur/wharehauora-server",
+    "joshmcarthur/wmd"
+  ],
+  "forks": [
+    {
+      "fork": "joshmcarthur/LED-Rails-Firmware",
+      "upstream": "CDFER/LED-Rails-Firmware",
+      "branch": "main"
+    },
+    {
+      "fork": "joshmcarthur/MeshCore",
+      "upstream": "meshcore-dev/MeshCore",
+      "branch": "main"
+    },
+    {
+      "fork": "joshmcarthur/data-wizard",
+      "upstream": "Capevace/data-wizard",
+      "branch": "main"
+    },
+    {
+      "fork": "joshmcarthur/graphql-ruby",
+      "upstream": "rmosolgo/graphql-ruby",
+      "branch": "master"
+    },
+    {
+      "fork": "joshmcarthur/hotwire-native-ios",
+      "upstream": "hotwired/hotwire-native-ios",
+      "branch": "main"
+    },
+    {
+      "fork": "joshmcarthur/llm-magic",
+      "upstream": "Capevace/llm-magic",
+      "branch": "main"
+    },
+    {
+      "fork": "joshmcarthur/meshtastic-firmware",
+      "upstream": "meshtastic/firmware",
+      "branch": "develop-patched"
+    },
+    {
+      "fork": "joshmcarthur/rails",
+      "upstream": "rails/rails",
+      "branch": "master"
+    },
+    {
+      "fork": "joshmcarthur/rgeo",
+      "upstream": "rgeo/rgeo",
+      "branch": "main"
+    },
+    {
+      "fork": "joshmcarthur/ruby_llm",
+      "upstream": "crmne/ruby_llm",
+      "branch": "main"
+    },
+    {
+      "fork": "joshmcarthur/rxdb",
+      "upstream": "pubkey/rxdb",
+      "branch": "master"
+    },
+    {
+      "fork": "joshmcarthur/turbonativedirectory",
+      "upstream": "robzolkos/hotwirenativedirectory",
+      "branch": "main"
+    }
+  ]
 }
