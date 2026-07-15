@@ -1,0 +1,110 @@
+name: Sync forks
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      has-forks: ${{ steps.set-matrix.outputs.has-forks }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build matrix
+        id: set-matrix
+        run: |
+          if ! jq -e '.forks | length > 0' repos.json >/dev/null; then
+            echo "No forks configured in repos.json" >&2
+            echo "has-forks=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          matrix="$(jq -c '{include: .forks}' repos.json)"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "has-forks=true" >> "$GITHUB_OUTPUT"
+
+  sync:
+    needs: prepare
+    if: needs.prepare.outputs.has-forks == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    name: sync (${{ matrix.fork }})
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync fork
+        id: sync
+        env:
+          GH_TOKEN: ${{ secrets.FORKLIFT_TOKEN }}
+        run: |
+          set +e
+          output="$(./sync.sh "${{ matrix.upstream }}" "${{ matrix.fork }}" "${{ matrix.branch }}" 2>&1)"
+          code=$?
+          if [[ "$code" -eq 0 ]]; then
+            echo "ok|${{ matrix.fork }}" > result.txt
+            echo "$output"
+          else
+            reason="${output#✗ ${{ matrix.fork }} failed: }"
+            echo "fail|${{ matrix.fork }}|${reason:-sync failed}" > result.txt
+            echo "$output" >&2
+          fi
+
+      - name: Upload result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-${{ strategy.job-index }}
+          path: result.txt
+
+  report:
+    needs: [prepare, sync]
+    if: always() && needs.prepare.outputs.has-forks == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download results
+        uses: actions/download-artifact@v4
+        with:
+          path: results
+          merge-multiple: true
+
+      - name: Write summary
+        run: |
+          synced=0
+          failed=0
+
+          while IFS= read -r file; do
+            while IFS='|' read -r status fork reason; do
+              case "$status" in
+                ok)
+                  echo "✓ $fork synced" >> "$GITHUB_STEP_SUMMARY"
+                  synced=$((synced + 1))
+                  ;;
+                fail)
+                  echo "✗ $fork failed: ${reason:-unknown}" >> "$GITHUB_STEP_SUMMARY"
+                  failed=$((failed + 1))
+                  ;;
+              esac
+            done < "$file"
+          done < <(find results -type f -name 'result.txt' | sort)
+
+          {
+            echo ""
+            echo "---"
+            echo "$synced synced, $failed failed"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [[ "$failed" -gt 0 ]]; then
+            exit 1
+          fi
