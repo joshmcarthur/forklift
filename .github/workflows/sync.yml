@@ -28,7 +28,7 @@ jobs:
             exit 0
           fi
 
-          matrix="$(jq -c '{include: .forks}' repos.json)"
+          matrix="$(jq -c '{include: [.forks[] | .disable_actions //= true]}' repos.json)"
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
           echo "has-forks=true" >> "$GITHUB_OUTPUT"
 
@@ -51,7 +51,7 @@ jobs:
         run: |
           set +e
           result_file="result-${{ strategy.job-index }}.txt"
-          output="$(./sync.sh "${{ matrix.upstream }}" "${{ matrix.fork }}" "${{ matrix.branch }}" 2>&1)"
+          output="$(./sync.sh "${{ matrix.upstream }}" "${{ matrix.fork }}" "${{ matrix.branch }}" "${{ matrix.disable_actions }}" 2>&1)"
           code=$?
           if [[ "$code" -eq 0 ]]; then
             echo "ok|${{ matrix.fork }}" > "$result_file"

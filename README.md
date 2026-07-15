@@ -20,7 +20,7 @@ New forks are picked up automatically. Add forks to `ignore` if you do not want 
 Create a secret named `FORKLIFT_TOKEN` on this repository:
 
 - **Classic PAT**: `repo` and `workflow` scopes
-- **Fine-grained PAT**: read/write on each fork you want to sync, including **Actions: Read and write** when upstream changes touch workflow files
+- **Fine-grained PAT**: read/write on each fork you want to sync, including **Actions: Read and write** (needed to pause Actions during sync and when upstream changes touch workflow files)
 
 The workflows pass this to `gh` as `GH_TOKEN`.
 
@@ -45,6 +45,12 @@ This is required for the discover workflow to open PRs when your fork list chang
       "upstream": "neovim/neovim",
       "fork": "your-github-username/neovim",
       "branch": "master"
+    },
+    {
+      "upstream": "someorg/active-project",
+      "fork": "your-github-username/active-project",
+      "branch": "main",
+      "disable_actions": false
     }
   ]
 }
@@ -56,8 +62,13 @@ This is required for the discover workflow to open PRs when your fork list chang
 | `ignore` | Fork names (`owner/repo`) excluded from sync |
 | `forks` | Repositories to mirror-sync |
 | `forks[].branch` | Branch to mirror-sync on both upstream and fork (defaults to upstream default) |
+| `forks[].disable_actions` | Temporarily disable Actions on the fork while syncing (default: `true`). Set to `false` to leave Actions enabled throughout sync |
 
 Sync updates the **same branch name** on your fork as on upstream. If your fork's default branch differs (for example `develop-patched` while upstream uses `develop`), only the matching upstream branch is updated — your other branches are left alone.
+
+By default, Forklift disables Actions on each fork **only while the sync runs**, then restores the previous setting. Large upstream repos often ship dozens of workflows; without this, every sync push can kick off a full CI run on your fork and burn Actions minutes. Forklift only needs to update git refs — it does not need your fork's CI.
+
+If Actions were already disabled on a fork, Forklift leaves them off. Set `"disable_actions": false` on forks where you want workflows to run on the sync push itself (for example, a project you're actively developing on).
 
 ### Ignoring a fork
 
@@ -102,13 +113,16 @@ Exits with code `2` when `--config` is used and the `forks` list changed.
 Mirror-syncs one branch from upstream to fork (same branch name on both):
 
 ```bash
-./sync.sh <upstream> <fork> [branch]
+./sync.sh <upstream> <fork> [branch] [disable-actions]
 
-# Example
+# Example (Actions paused during sync by default)
 ./sync.sh neovim/neovim your-github-username/neovim master
+
+# Leave Actions enabled throughout sync
+./sync.sh neovim/neovim your-github-username/neovim master false
 ```
 
-The optional `branch` defaults to the upstream default. Your fork's default branch is not used when it differs from upstream.
+The optional `branch` defaults to the upstream default. The optional `disable-actions` argument defaults to `true` (pause Actions only for the duration of the sync).
 
 Divergent commits on the fork are overwritten (`--force`).
 
