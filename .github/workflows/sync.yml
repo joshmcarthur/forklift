@@ -50,29 +50,35 @@ jobs:
           GH_TOKEN: ${{ secrets.FORKLIFT_TOKEN }}
         run: |
           set +e
+          result_file="result-${{ strategy.job-index }}.txt"
           output="$(./sync.sh "${{ matrix.upstream }}" "${{ matrix.fork }}" "${{ matrix.branch }}" 2>&1)"
           code=$?
           if [[ "$code" -eq 0 ]]; then
-            echo "ok|${{ matrix.fork }}" > result.txt
+            echo "ok|${{ matrix.fork }}" > "$result_file"
             echo "$output"
           else
-            reason="${output#✗ ${{ matrix.fork }} failed: }"
-            echo "fail|${{ matrix.fork }}|${reason:-sync failed}" > result.txt
+            reason="$(printf '%s\n' "$output" | grep -F "✗ ${{ matrix.fork }} failed: " | tail -1)"
+            reason="${reason#✗ ${{ matrix.fork }} failed: }"
+            printf 'fail|%s|%s\n' "${{ matrix.fork }}" "${reason:-sync failed}" > "$result_file"
             echo "$output" >&2
+            exit 1
           fi
 
       - name: Upload result
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: result-${{ strategy.job-index }}
-          path: result.txt
+          name: sync-result-${{ strategy.job-index }}
+          path: result-${{ strategy.job-index }}.txt
 
   report:
     needs: [prepare, sync]
     if: always() && needs.prepare.outputs.has-forks == 'true'
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Download results
         uses: actions/download-artifact@v4
         with:
@@ -83,6 +89,7 @@ jobs:
         run: |
           synced=0
           failed=0
+          expected="$(jq -r '.forks | length' repos.json)"
 
           while IFS= read -r file; do
             while IFS='|' read -r status fork reason; do
@@ -97,7 +104,14 @@ jobs:
                   ;;
               esac
             done < "$file"
-          done < <(find results -type f -name 'result.txt' | sort)
+          done < <(find results -type f -name 'result-*.txt' | sort)
+
+          reported=$((synced + failed))
+          if [[ "$reported" -lt "$expected" ]]; then
+            missing=$((expected - reported))
+            echo "✗ $missing fork(s) missing results (job may have failed before reporting)" >> "$GITHUB_STEP_SUMMARY"
+            failed=$((failed + missing))
+          fi
 
           {
             echo ""
