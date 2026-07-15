@@ -96,7 +96,8 @@ gh repo list "$account" "${repo_list_args[@]}" \
     {
       fork: .nameWithOwner,
       upstream: (.parent.owner.login + "/" + .parent.name),
-      branch: (.parent.defaultBranchRef.name // .defaultBranchRef.name // "main")
+      branch: (.parent.defaultBranchRef.name // .defaultBranchRef.name // "main"),
+      disable_actions: true
     }
   ] | sort_by(.fork)
 ' >"$discovered"
