@@ -56,62 +56,74 @@
     {
       "fork": "joshmcarthur/LED-Rails-Firmware",
       "upstream": "CDFER/LED-Rails-Firmware",
-      "branch": "main"
+      "branch": "main",
+      "disable_actions": true
     },
     {
       "fork": "joshmcarthur/MeshCore",
       "upstream": "meshcore-dev/MeshCore",
-      "branch": "main"
+      "branch": "main",
+      "disable_actions": true
     },
     {
       "fork": "joshmcarthur/data-wizard",
       "upstream": "Capevace/data-wizard",
-      "branch": "main"
+      "branch": "main",
+      "disable_actions": true
     },
     {
       "fork": "joshmcarthur/graphql-ruby",
       "upstream": "rmosolgo/graphql-ruby",
-      "branch": "master"
+      "branch": "master",
+      "disable_actions": true
     },
     {
       "fork": "joshmcarthur/hotwire-native-ios",
       "upstream": "hotwired/hotwire-native-ios",
-      "branch": "main"
+      "branch": "main",
+      "disable_actions": true
     },
     {
       "fork": "joshmcarthur/llm-magic",
       "upstream": "Capevace/llm-magic",
-      "branch": "main"
+      "branch": "main",
+      "disable_actions": true
     },
     {
       "fork": "joshmcarthur/meshtastic-firmware",
       "upstream": "meshtastic/firmware",
-      "branch": "develop"
+      "branch": "develop",
+      "disable_actions": true
     },
     {
       "fork": "joshmcarthur/rails",
       "upstream": "rails/rails",
-      "branch": "master"
+      "branch": "master",
+      "disable_actions": true
     },
     {
       "fork": "joshmcarthur/rgeo",
       "upstream": "rgeo/rgeo",
-      "branch": "main"
+      "branch": "main",
+      "disable_actions": true
     },
     {
       "fork": "joshmcarthur/ruby_llm",
       "upstream": "crmne/ruby_llm",
-      "branch": "main"
+      "branch": "main",
+      "disable_actions": true
     },
     {
       "fork": "joshmcarthur/rxdb",
       "upstream": "pubkey/rxdb",
-      "branch": "master"
+      "branch": "master",
+      "disable_actions": true
     },
     {
       "fork": "joshmcarthur/turbonativedirectory",
       "upstream": "robzolkos/hotwirenativedirectory",
-      "branch": "main"
+      "branch": "main",
+      "disable_actions": true
     }
   ]
 }
