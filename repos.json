@@ -86,7 +86,7 @@
     {
       "fork": "joshmcarthur/meshtastic-firmware",
       "upstream": "meshtastic/firmware",
-      "branch": "develop-patched"
+      "branch": "develop"
     },
     {
       "fork": "joshmcarthur/rails",
