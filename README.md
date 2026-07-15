@@ -83,12 +83,13 @@ export GH_TOKEN=<your-pat>   # or use gh auth login
 
 ### `discover.sh`
 
-Lists forks for a GitHub account and updates `repos.json`.
+Lists forks for a GitHub account and updates `repos.json`. By default only **public** forks are discovered; pass `--include-private` to include private forks as well.
 
 ```bash
-./discover.sh                              # print JSON to stdout
+./discover.sh                              # print JSON to stdout (public forks only)
 ./discover.sh your-github-username         # specific account
 ./discover.sh --config repos.json -o repos.json
+./discover.sh --include-private --config repos.json -o repos.json
 ```
 
 Exits with code `2` when `--config` is used and the `forks` list changed.

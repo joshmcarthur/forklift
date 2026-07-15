@@ -4,15 +4,17 @@ set -euo pipefail
 config_file=""
 output_file=""
 account=""
+include_private=false
 
 usage() {
   cat >&2 <<EOF
 Usage: $0 [options] [account]
 
 Options:
-  --config FILE   Existing repos.json to merge into (reads account and ignore)
-  -o FILE         Write output to FILE instead of stdout
-  -h, --help      Show this help
+  --config FILE       Existing repos.json to merge into (reads account and ignore)
+  --include-private   Also discover private forks (default: public only)
+  -o FILE             Write output to FILE instead of stdout
+  -h, --help          Show this help
 EOF
   exit 1
 }
@@ -27,6 +29,10 @@ while [[ $# -gt 0 ]]; do
       [[ $# -ge 2 ]] || usage
       config_file="$2"
       shift 2
+      ;;
+    --include-private)
+      include_private=true
+      shift
       ;;
     -o)
       [[ $# -ge 2 ]] || usage
@@ -76,7 +82,12 @@ tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 discovered="$tmpdir/discovered.json"
 
-gh repo list "$account" --fork --no-archived --limit 1000 \
+repo_list_args=(--fork --no-archived --limit 1000)
+if [[ "$include_private" == false ]]; then
+  repo_list_args+=(--visibility public)
+fi
+
+gh repo list "$account" "${repo_list_args[@]}" \
   --json nameWithOwner,parent,defaultBranchRef \
 | jq --argjson ignore "$ignore" '
   [.[] |
