@@ -19,8 +19,8 @@ New forks are picked up automatically. Add forks to `ignore` if you do not want 
 
 Create a secret named `FORKLIFT_TOKEN` on this repository:
 
-- **Classic PAT**: `repo` scope
-- **Fine-grained PAT**: read/write on each fork you want to sync
+- **Classic PAT**: `repo` and `workflow` scopes
+- **Fine-grained PAT**: read/write on each fork you want to sync, including **Actions: Read and write** when upstream changes touch workflow files
 
 The workflows pass this to `gh` as `GH_TOKEN`.
 
@@ -55,6 +55,9 @@ This is required for the discover workflow to open PRs when your fork list chang
 | `account` | GitHub user whose forks to discover |
 | `ignore` | Fork names (`owner/repo`) excluded from sync |
 | `forks` | Repositories to mirror-sync |
+| `forks[].branch` | Branch to mirror-sync on both upstream and fork (defaults to upstream default) |
+
+Sync updates the **same branch name** on your fork as on upstream. If your fork's default branch differs (for example `develop-patched` while upstream uses `develop`), only the matching upstream branch is updated — your other branches are left alone.
 
 ### Ignoring a fork
 
@@ -96,14 +99,16 @@ Exits with code `2` when `--config` is used and the `forks` list changed.
 
 ### `sync.sh`
 
-Mirror-syncs one fork to upstream:
+Mirror-syncs one branch from upstream to fork (same branch name on both):
 
 ```bash
-./sync.sh <upstream> <fork> <branch>
+./sync.sh <upstream> <fork> [branch]
 
 # Example
 ./sync.sh neovim/neovim your-github-username/neovim master
 ```
+
+The optional `branch` defaults to the upstream default. Your fork's default branch is not used when it differs from upstream.
 
 Divergent commits on the fork are overwritten (`--force`).
 
